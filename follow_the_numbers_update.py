@@ -32,28 +32,29 @@ attempts = 3
 end_game = False
 
 
+
 def place_dots(actor,index):
     global dots
     actor.pos = random.randint(20, WIDTH - 20), random.randint(20, HEIGHT - 20)
-    x1 = dots[index-1].pos[0]
-    x2 = actor.pos[0]
-    y1 = dots[index-1].pos[1]
-    y2 = actor.pos[1]
-    dist = math.sqrt((x2-x1)^2+(y2-y1)^2)
-    while True:
-        if index!=0:
-            if dist <10:
+
+    x1 = actor.pos[0]
+    y1 = actor.pos[1]
+
+    for i in range(len(dots)-1): #subtract one because you don't need current dot to compare its position to itself
+        x2 = dots[i].pos[0]
+        y2 = dots[i].pos[1]
+        dist = math.sqrt(math.pow(x2 - x1, 2) + math.pow(y2 - y1, 2))
+        #print("========="+str(dist))
+        while True:
+            if dist<100:
                 actor.pos = random.randint(20, WIDTH - 20), random.randint(20, HEIGHT - 20)
+                new_x=actor.pos[0]
+                new_y = actor.pos[1]
+                dist = math.sqrt(math.pow(x2 - new_x, 2) + math.pow(y2 - new_y, 2))
+                #print(dist)
             else:
                 break
 
-#set up the actors with a list
-for i in range (10):
-    actor = Actor("dot")
-    place_dots(actor,i)
-    #actor.pos = random.randint(20, WIDTH-20), random.randint(20,HEIGHT-20)
-    dots.append(actor) #add this actor object to our list
-    place_dots(actor,i)
 
 def draw():
     screen.fill("black")
@@ -90,10 +91,10 @@ def on_mouse_down(pos):
         attempts-=1
         if attempts == 0:
             game_over()
-    print(len(dots))
+    print(current_dot)
     if current_dot == len(dots):  # you reached the last dot
+        print("look here")
         next_level()
-
 
 def game_over():
     global end_game
@@ -105,11 +106,22 @@ def next_level():
     current_dot=0
     dots = []
 
-    for dot in range(0, 15):
+    for i in range(0, 15):
         actor = Actor("dot")
         actor.pos = random.randint(20, WIDTH - 20), random.randint(20, HEIGHT - 20)
         dots.append(actor)  # add this actor object to our list
+        if i != 0:
+            place_dots(actor, i)
 
+
+
+#MAIN FUNCTION 1ST LEVEL
+for i in range (10):
+    actor = Actor("dot")
+    #actor.pos = random.randint(20, WIDTH-20), random.randint(20,HEIGHT-20)
+    dots.append(actor) #add this actor object to our list
+    if i!=0:
+        place_dots(actor,i)
 
 
 pgzrun.go()
